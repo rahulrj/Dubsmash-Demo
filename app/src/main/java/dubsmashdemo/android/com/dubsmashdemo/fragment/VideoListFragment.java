@@ -12,7 +12,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -156,7 +155,6 @@ public class VideoListFragment extends Fragment implements LoaderListener {
                 VideoObject videoObject = new VideoObject(mVideoFileName, data.getDataString());
                 saveVideoPathInDb(videoObject);
                 mAllVideoFiles.add(videoObject);
-                Log.d("RAHUL", "" + mAllVideoFiles.size());
                 if (mVideoFilesAdapter != null) {
                     updateRecyclerViewAdapter();
                 } else {
