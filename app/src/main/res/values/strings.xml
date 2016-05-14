@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Dubsmash-Demo</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_recordvideo">Record Video</string>
+    <string name="videopreview_title">Video Preview</string>
+    <string name="permission_request">This sample needs permission for external storage.</string>
+
+
+
+</resources>
