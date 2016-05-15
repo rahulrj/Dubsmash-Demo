@@ -74,7 +74,6 @@ public class Camera2VideoFragment extends Fragment
     private static final String FRAGMENT_DIALOG = "dialog";
 
     private File mVideoFile;
-    private View mRootFragmentView;
     private CountDownTimer mCountDownTimer;
 
 
@@ -292,7 +291,6 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mRootFragmentView = view;
         mTextureView = (TextureView) view.findViewById(R.id.texture);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mTimerView = (TextView) view.findViewById(R.id.timer);

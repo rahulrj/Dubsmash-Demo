@@ -40,7 +40,6 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     private static final String TAG = CameraVideoFragment.class.getSimpleName();
 
     private File mVideoFile;
-    private View mRootFragmentView;
     private CountDownTimer mCountDownTimer;
     private TextView mTimerView;
     private TextureView mTextureView;
@@ -49,7 +48,6 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     private boolean mIsRecordingVideo;
     private MediaRecorder mMediaRecorder;
     private Camera mCamera;
-    private boolean isMediaRecorderPrepared;
 
 
     public static CameraVideoFragment newInstance() {
@@ -73,7 +71,6 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mRootFragmentView = view;
         mTextureView = (TextureView) view.findViewById(R.id.texture);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mTimerView = (TextView) view.findViewById(R.id.timer);
@@ -270,15 +267,12 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         protected Boolean doInBackground(Void... voids) {
             // initialize video camera
             if (prepareVideoRecorder()) {
-                // Camera is available and unlocked, MediaRecorder is prepared,
-                // now you can start recording
-                isMediaRecorderPrepared = true;
+                return true;
             } else {
                 // prepare didn't work, release the camera
                 releaseMediaRecorder();
                 return false;
             }
-            return true;
         }
 
         @Override
