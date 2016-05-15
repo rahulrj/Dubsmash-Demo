@@ -7,7 +7,7 @@
     <string name="record">Record</string>
     <string name="stop">Stop</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
-    <string name="timer_finish">5</string>
+    <string name="timer_finish">20</string>
     <string name="camera_audio_permission_request">This sample needs permission for camera and audio recording.</string>
 
 

@@ -131,7 +131,7 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     }
 
     private void startTheTimer() {
-        mCountDownTimer = new CountDownTimer(5000, 1000) {
+        mCountDownTimer = new CountDownTimer(Constants.RECORDING_MAX_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimerView.setText("" + (millisUntilFinished / 1000));

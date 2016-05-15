@@ -339,7 +339,7 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void startTheTimer() {
-        mCountDownTimer = new CountDownTimer(5000, 1000) {
+        mCountDownTimer = new CountDownTimer(Constants.RECORDING_MAX_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mTimerView.setText("" + (millisUntilFinished / 1000));
@@ -619,7 +619,7 @@ public class Camera2VideoFragment extends Fragment
                 mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
                 break;
         }
-        mMediaRecorder.setMaxDuration(5000);
+        mMediaRecorder.setMaxDuration(Constants.RECORDING_MAX_DURATION);
         mMediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
             public void onInfo(MediaRecorder mr, int what, int extra) {

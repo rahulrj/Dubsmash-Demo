@@ -7,7 +7,7 @@ import android.Manifest;
  */
 public class Constants {
 
-    public static final int RECORDING_MAX_DURATION = 5;
+    public static final int RECORDING_MAX_DURATION = 20000;
     public static final int VIDEO_CAPTURE = 201;
     public static final int VIDEO_CAPTURE_CAMERA = 101;
 
