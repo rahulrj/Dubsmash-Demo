@@ -28,9 +28,6 @@ import java.util.List;
 @SuppressWarnings("deprecation")
 public class CameraHelper {
 
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
-
     /**
      * Iterate over supported camera video sizes to see which one best fits the
      * dimensions of the given view while maintaining the aspect ratio. If none can,
@@ -96,23 +93,6 @@ public class CameraHelper {
      */
     public static Camera getDefaultCameraInstance() {
         return Camera.open();
-    }
-
-
-    /**
-     * @return the default rear/back facing camera on the device. Returns null if camera is not
-     * available.
-     */
-    public static Camera getDefaultBackFacingCameraInstance() {
-        return getDefaultCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
-    }
-
-    /**
-     * @return the default front facing camera on the device. Returns null if camera is not
-     * available.
-     */
-    public static Camera getDefaultFrontFacingCameraInstance() {
-        return getDefaultCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
     }
 
 

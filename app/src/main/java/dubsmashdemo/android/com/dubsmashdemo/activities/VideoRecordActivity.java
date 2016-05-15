@@ -3,12 +3,14 @@ package dubsmashdemo.android.com.dubsmashdemo.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import java.io.File;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.fragment.Camera2VideoFragment;
+import dubsmashdemo.android.com.dubsmashdemo.fragment.CameraVideoFragment;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 
 /**
@@ -37,11 +39,17 @@ public class VideoRecordActivity extends Activity {
     }
 
     private void setUpVideoRecordFragment() {
+        Fragment cameraFragment = null;
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.KEY_VIDEO_FILE_NAME, mVideoFileName);
-        Fragment camera2VideoFragment = Camera2VideoFragment.newInstance();
-        camera2VideoFragment.setArguments(bundle);
-        getFragmentManager().beginTransaction().replace(R.id.container, camera2VideoFragment).commit();
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            cameraFragment = Camera2VideoFragment.newInstance();
+        } else {
+            cameraFragment = CameraVideoFragment.newInstance();
+        }
+        cameraFragment.setArguments(bundle);
+        getFragmentManager().beginTransaction().replace(R.id.container, cameraFragment).commit();
 
     }
 }

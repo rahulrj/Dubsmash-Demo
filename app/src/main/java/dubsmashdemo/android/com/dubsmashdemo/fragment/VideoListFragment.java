@@ -5,14 +5,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -137,29 +134,14 @@ public class VideoListFragment extends Fragment implements LoaderListener {
                 showSnackMessage("Failed to create video directory");
                 return;
             }
-            if (Build.VERSION.SDK_INT >= 21) {
-                Intent intent = new Intent(getActivity(), VideoRecordActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Constants.KEY_VIDEO_FILE_NAME, videoFile);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, Constants.VIDEO_CAPTURE_CAMERA);
-                return;
-            }
 
-            if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
-                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Constants.RECORDING_MAX_DURATION);
-                intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+            Intent intent = new Intent(getActivity(), VideoRecordActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Constants.KEY_VIDEO_FILE_NAME, videoFile);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, Constants.VIDEO_CAPTURE_CAMERA);
 
-                if (videoFile != null) {
-                    Uri videoUri = Uri.fromFile(videoFile);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-                    startActivityForResult(intent, Constants.VIDEO_CAPTURE);
-                }
-            }
 
-        } else {
-            showSnackMessage("No camera on device");
         }
     }
 
@@ -167,27 +149,9 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.VIDEO_CAPTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.d("RAHUL", "" + data.getDataString());
-                Snackbar.make(mFragmentRootView, "Video has been saved as : " + mVideoFileName, Snackbar.LENGTH_LONG).show();
-                VideoObject videoObject = new VideoObject(mVideoFileName, data.getDataString());
-                saveVideoPathInDb(videoObject);
-                mAllVideoFiles.add(videoObject);
-                if (mVideoFilesAdapter != null) {
-                    updateRecyclerViewAdapter();
-                } else {
-                    setDataInAdapter();
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                showSnackMessage("Video recording cancelled");
-            } else {
-                showSnackMessage("Failed to record video");
-            }
-        } else if (requestCode == Constants.VIDEO_CAPTURE_CAMERA) {
+        if (requestCode == Constants.VIDEO_CAPTURE_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
                 Snackbar.make(mFragmentRootView, "Video has been saved as : " + mVideoFileName, Snackbar.LENGTH_LONG).show();
-                Log.d("RAHUL", "" + data.getStringExtra(Constants.KEY_VIDEO_ABS_PATH));
                 VideoObject videoObject = new VideoObject(mVideoFileName, data.getStringExtra(Constants.KEY_VIDEO_ABS_PATH));
                 saveVideoPathInDb(videoObject);
                 mAllVideoFiles.add(videoObject);

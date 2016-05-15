@@ -45,6 +45,12 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     private boolean mIsRecordingVideo;
     private MediaRecorder mMediaRecorder;
     private Camera mCamera;
+    private boolean isMediaRecorderPrepared;
+
+
+    public static CameraVideoFragment newInstance() {
+        return new CameraVideoFragment();
+    }
 
 
     @Override
@@ -68,6 +74,8 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mTimerView = (TextView) view.findViewById(R.id.timer);
         mButtonVideo.setOnClickListener(this);
+        new MediaPrepareTask().execute(null, null, null);
+
     }
 
     @Override
@@ -101,15 +109,16 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
             mCamera.lock();         // take camera access back from MediaRecorder
 
             // inform the user that recording has stopped
-            setCaptureButtonText(getString(R.string.record));
             mIsRecordingVideo = false;
             releaseCamera();
             cancelTheTimer();
             sendDataBackToActivity();
 
         } else {
-
-            new MediaPrepareTask().execute(null, null, null);
+            mIsRecordingVideo = true;
+            // inform the user that recording has started
+            mMediaRecorder.start();
+            setCaptureButtonText(getString(R.string.stop));
             startTheTimer();
 
         }
@@ -259,8 +268,7 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
             if (prepareVideoRecorder()) {
                 // Camera is available and unlocked, MediaRecorder is prepared,
                 // now you can start recording
-                mMediaRecorder.start();
-                mIsRecordingVideo = true;
+                isMediaRecorderPrepared = true;
             } else {
                 // prepare didn't work, release the camera
                 releaseMediaRecorder();
@@ -272,10 +280,9 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         @Override
         protected void onPostExecute(Boolean result) {
             if (!result) {
+                getActivity().setResult(Activity.RESULT_CANCELED);
                 getActivity().finish();
             }
-            // inform the user that recording has started
-            setCaptureButtonText(getString(R.string.stop));
 
         }
     }
