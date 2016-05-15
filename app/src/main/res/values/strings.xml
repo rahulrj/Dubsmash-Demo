@@ -3,11 +3,13 @@
     <string name="action_settings">Settings</string>
     <string name="action_recordvideo">Record Video</string>
     <string name="videopreview_title">Video Preview</string>
-    <string name="permission_request">This sample needs permission for external storage.</string>
+    <string name="storage_permission_request">This sample needs permission for external storage.</string>
     <string name="record">Record</string>
     <string name="stop">Stop</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="timer_finish">5</string>
+    <string name="camera_audio_permission_request">This sample needs permission for camera and audio recording.</string>
+
 
 
 

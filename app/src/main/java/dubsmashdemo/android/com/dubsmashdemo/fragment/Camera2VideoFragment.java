@@ -25,6 +25,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -59,7 +60,7 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 
 @TargetApi(21)
 public class Camera2VideoFragment extends Fragment
-        implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+        implements View.OnClickListener {
 
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
@@ -67,18 +68,12 @@ public class Camera2VideoFragment extends Fragment
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
 
     private static final String TAG = "Camera2VideoFragment";
-    private static final int REQUEST_VIDEO_PERMISSIONS = 2;
     private static final String FRAGMENT_DIALOG = "dialog";
 
     private File mVideoFile;
     private View mRootFragmentView;
     private CountDownTimer mCountDownTimer;
 
-
-    private static final String[] VIDEO_PERMISSIONS = {
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-    };
 
     static {
         DEFAULT_ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -312,6 +307,7 @@ public class Camera2VideoFragment extends Fragment
         }
     }
 
+
     @Override
     public void onPause() {
         closeCamera();
@@ -388,9 +384,10 @@ public class Camera2VideoFragment extends Fragment
      * @param permissions The permissions your app wants to request.
      * @return Whether you can show permission rationale UI.
      */
+    @TargetApi(23)
     private boolean shouldShowRequestPermissionRationale(String[] permissions) {
         for (String permission : permissions) {
-            if (FragmentCompat.shouldShowRequestPermissionRationale(this, permission)) {
+            if (shouldShowRequestPermissionRationale(permission)) {
                 return true;
             }
         }
@@ -400,43 +397,43 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Requests permissions needed for recording video.
      */
+    @TargetApi(23)
     private void requestVideoPermissions() {
-        if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
+        if (shouldShowRequestPermissionRationale(Constants.CAMERA_PERMISSIONS)) {
+            new PermissionConfirmationDialog().newInstance(getString(R.string.camera_audio_permission_request),
+                    Constants.REQUEST_CAMERA_PERMISSIONS, Constants.CAMERA_PERMISSIONS).
+                    show(getChildFragmentManager(), FRAGMENT_DIALOG);
         } else {
-            FragmentCompat.requestPermissions(this, VIDEO_PERMISSIONS, REQUEST_VIDEO_PERMISSIONS);
+            requestPermissions(Constants.CAMERA_PERMISSIONS, Constants.REQUEST_CAMERA_PERMISSIONS);
         }
 
     }
+
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult");
-        if (requestCode == REQUEST_VIDEO_PERMISSIONS) {
-            if (grantResults.length == VIDEO_PERMISSIONS.length) {
-                for (int result : grantResults) {
-                    if (result != PackageManager.PERMISSION_GRANTED) {
-                        ErrorDialog.newInstance(getString(R.string.permission_request))
-                                .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-                        break;
+    @TargetApi(23)
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case Constants.REQUEST_STORAGE_PERMISSIONS:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mTextureView.isAvailable()) {
+                        openCamera(mTextureView.getWidth(), mTextureView.getHeight());
                     }
                 }
-            } else {
-                ErrorDialog.newInstance(getString(R.string.permission_request))
-                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
         }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
     }
 
+
+
+    @TargetApi(23)
     private boolean hasPermissionsGranted(String[] permissions) {
         for (String permission : permissions) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), permission)
+            if (getActivity().checkSelfPermission(permission)
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
@@ -447,11 +444,13 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Tries to open a {@link CameraDevice}. The result is listened by `mStateCallback`.
      */
+    @TargetApi(23)
     private void openCamera(int width, int height) {
-        Log.d(TAG, "Try to open camera");
-        if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
-            requestVideoPermissions();
-            return;
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (!hasPermissionsGranted(Constants.CAMERA_PERMISSIONS)) {
+                requestVideoPermissions();
+                return;
+            }
         }
         final Activity activity = getActivity();
         if (null == activity || activity.isFinishing()) {
@@ -481,10 +480,7 @@ public class Camera2VideoFragment extends Fragment
             Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
             activity.finish();
         } catch (NullPointerException e) {
-            // Currently an NPE is thrown when the Camera2API is used but not supported on the
-            // device this code runs.
-            ErrorDialog.newInstance(getString(R.string.camera_error))
-                    .show(getChildFragmentManager(), FRAGMENT_DIALOG);
+           // show snack message
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.");
         }
@@ -737,58 +733,5 @@ public class Camera2VideoFragment extends Fragment
 
     }
 
-    public static class ErrorDialog extends DialogFragment {
-
-        private static final String ARG_MESSAGE = "message";
-
-        public static ErrorDialog newInstance(String message) {
-            ErrorDialog dialog = new ErrorDialog();
-            Bundle args = new Bundle();
-            args.putString(ARG_MESSAGE, message);
-            dialog.setArguments(args);
-            return dialog;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Activity activity = getActivity();
-            return new AlertDialog.Builder(activity)
-                    .setMessage(getArguments().getString(ARG_MESSAGE))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            activity.finish();
-                        }
-                    })
-                    .create();
-        }
-
-    }
-
-    public static class ConfirmationDialog extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.permission_request)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            FragmentCompat.requestPermissions(parent, VIDEO_PERMISSIONS,
-                                    REQUEST_VIDEO_PERMISSIONS);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    parent.getActivity().finish();
-                                }
-                            })
-                    .create();
-        }
-
-    }
 
 }

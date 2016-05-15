@@ -103,7 +103,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
         switch (item.getItemId()) {
             case R.id.action_recordvideo:
                 if (Build.VERSION.SDK_INT >= 23) {
-                    if (!hasPermissionsGranted(Constants.VIDEO_PERMISSIONS)) {
+                    if (!hasPermissionsGranted(Constants.STORAGE_PERMISSIONS)) {
                         requestVideoPermissions();
                         return super.onOptionsItemSelected(item);
 
@@ -239,11 +239,13 @@ public class VideoListFragment extends Fragment implements LoaderListener {
 
     @TargetApi(23)
     private void requestVideoPermissions() {
-        if (shouldShowRequestPermissionRationale(Constants.VIDEO_PERMISSIONS)) {
-            new PermissionConfirmationDialog().show(getChildFragmentManager(), PermissionConfirmationDialog.FRAGMENT_DIALOG);
+        if (shouldShowRequestPermissionRationale(Constants.STORAGE_PERMISSIONS)) {
+            new PermissionConfirmationDialog().newInstance(getString(R.string.storage_permission_request),
+                    Constants.REQUEST_STORAGE_PERMISSIONS, Constants.STORAGE_PERMISSIONS)
+                    .show(getChildFragmentManager(), PermissionConfirmationDialog.FRAGMENT_DIALOG);
             return;
         }
-        requestPermissions(Constants.VIDEO_PERMISSIONS, Constants.REQUEST_VIDEO_PERMISSIONS);
+        requestPermissions(Constants.STORAGE_PERMISSIONS, Constants.REQUEST_STORAGE_PERMISSIONS);
 
     }
 
@@ -253,7 +255,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case Constants.REQUEST_VIDEO_PERMISSIONS:
+            case Constants.REQUEST_STORAGE_PERMISSIONS:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startRecordingVideo();
