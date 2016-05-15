@@ -8,12 +8,16 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import dubsmashdemo.android.com.dubsmashdemo.db.MySQLiteHelper;
+import dubsmashdemo.android.com.dubsmashdemo.db.VideoDbHelper;
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.LoaderListener;
 import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 
 /**
  * Created by rahul.raja on 5/14/16.
+ */
+
+/**
+ * {@link AsyncTask} to fetch the videos list from DB
  */
 public class DbFetcherTask extends AsyncTask<Void, Void, List<VideoObject>> {
 
@@ -32,7 +36,7 @@ public class DbFetcherTask extends AsyncTask<Void, Void, List<VideoObject>> {
     protected List<VideoObject> doInBackground(Void... params) {
         List<VideoObject> videoObjects = new ArrayList<>();
         if (mContext.get() != null) {
-            final MySQLiteHelper db = new MySQLiteHelper(mContext.get().getApplicationContext());
+            final VideoDbHelper db = new VideoDbHelper(mContext.get().getApplicationContext());
             videoObjects = db.getAllVideoDetails();
         }
 

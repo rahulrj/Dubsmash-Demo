@@ -43,6 +43,7 @@ public class VideoRecordActivity extends Activity {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.KEY_VIDEO_FILE_NAME, mVideoFileName);
 
+        // Use the new Camera2 APIs which are available from API 21 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cameraFragment = Camera2VideoFragment.newInstance();
         } else {

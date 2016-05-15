@@ -57,6 +57,10 @@ import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
+/**
+ * This fragment uses the new APIs available in Camera2 package which is available for Lollypop and above
+ */
+
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Camera2VideoFragment extends Fragment
         implements View.OnClickListener {
@@ -381,7 +385,7 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Requests permissions needed for recording video.
      */
-    @TargetApi(23)
+    @TargetApi(Build.VERSION_CODES.M)
     private void requestVideoPermissions() {
         if (Utils.shouldShowRequestPermissionRationale(this, Constants.CAMERA_PERMISSIONS)) {
             new PermissionConfirmationDialog().newInstance(getString(R.string.camera_audio_permission_request),
@@ -395,7 +399,7 @@ public class Camera2VideoFragment extends Fragment
 
 
     @Override
-    @TargetApi(23)
+    @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 

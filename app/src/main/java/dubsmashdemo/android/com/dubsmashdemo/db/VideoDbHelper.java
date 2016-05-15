@@ -14,14 +14,18 @@ import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 /**
  * Created by rahul.raja on 5/14/16.
  */
-public class MySQLiteHelper extends SQLiteOpenHelper {
+
+/**
+ * DB manager to save and retrieve the video paths list
+ */
+public class VideoDbHelper extends SQLiteOpenHelper {
 
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
     private static final String DATABASE_NAME = "VideoDB";
 
-    public MySQLiteHelper(Context context) {
+    public VideoDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

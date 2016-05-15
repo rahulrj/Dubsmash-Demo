@@ -30,6 +30,10 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 /**
  * Created by rahul.raja on 5/15/16.
  */
+
+/**
+ * This fragment uses the {@link Camera} APIs which are deprecated since Android API 21
+ */
 @SuppressWarnings("deprecation")
 public class CameraVideoFragment extends Fragment implements View.OnClickListener {
 

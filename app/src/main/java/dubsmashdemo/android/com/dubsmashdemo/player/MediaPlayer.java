@@ -21,6 +21,10 @@ import com.google.android.exoplayer.util.DebugTextViewHelper;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerEventsListener;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerInternalErrorListener;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
+
 /**
  * Created by rahul.raja on 5/14/16.
  */
@@ -29,55 +33,6 @@ public class MediaPlayer implements ExoPlayer.Listener,
         MediaCodecVideoTrackRenderer.EventListener,
         MediaCodecAudioTrackRenderer.EventListener,
         DebugTextViewHelper.Provider {
-
-    /**
-     * Builds renderers for the player.
-     */
-    public interface RendererBuilder {
-        /**
-         * Builds renderers for playback.
-         *
-         * @param player The player for which renderers are being built. {@link MediaPlayer#onRenderers}
-         *     should be invoked once the renderers have been built. If building fails,
-         *     {@link MediaPlayer#onRenderersError} should be invoked.
-         */
-        void buildRenderers(MediaPlayer player);
-        /**
-         * Cancels the current build operation, if there is one. Else does nothing.
-         * <p>
-         * A canceled build operation must not invoke {@link MediaPlayer#onRenderers} or
-         * {@link MediaPlayer#onRenderersError} on the player, which may have been released.
-         */
-        void cancel();
-    }
-
-    /**
-     * A listener for core events.
-     */
-    public interface Listener {
-        void onStateChanged(boolean playWhenReady, int playbackState);
-        void onError(Exception e);
-        void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
-                                float pixelWidthHeightRatio);
-    }
-
-    /**
-     * A listener for internal errors.
-     * <p>
-     * These errors are not visible to the user, and hence this listener is provided for
-     * informational purposes only. Note however that an internal error may cause a fatal
-     * error if the player fails to recover. If this happens, {@link Listener#onError(Exception)}
-     * will be invoked.
-     */
-    public interface InternalErrorListener {
-        void onRendererInitializationError(Exception e);
-        void onAudioTrackInitializationError(AudioTrack.InitializationException e);
-        void onAudioTrackWriteError(AudioTrack.WriteException e);
-        void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs);
-        void onDecoderInitializationError(MediaCodecTrackRenderer.DecoderInitializationException e);
-        void onCryptoError(MediaCodec.CryptoException e);
-        void onLoadError(int sourceId, IOException e);
-    }
 
 
 
@@ -99,10 +54,10 @@ public class MediaPlayer implements ExoPlayer.Listener,
     private static final int RENDERER_BUILDING_STATE_BUILDING = 2;
     private static final int RENDERER_BUILDING_STATE_BUILT = 3;
 
-    private final RendererBuilder rendererBuilder;
+    private final PlayerRendererBuilder rendererBuilder;
     private final ExoPlayer player;
     private final Handler mainHandler;
-    private final CopyOnWriteArrayList<Listener> listeners;
+    private final CopyOnWriteArrayList<PlayerEventsListener> listeners;
 
     private int rendererBuildingState;
     private int lastReportedPlaybackState;
@@ -117,9 +72,9 @@ public class MediaPlayer implements ExoPlayer.Listener,
     private BandwidthMeter bandwidthMeter;
     private boolean backgrounded;
 
-    private InternalErrorListener internalErrorListener;
+    private PlayerInternalErrorListener internalErrorListener;
 
-    public MediaPlayer(RendererBuilder rendererBuilder) {
+    public MediaPlayer(PlayerRendererBuilder rendererBuilder) {
         this.rendererBuilder = rendererBuilder;
         player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
         player.addListener(this);
@@ -133,11 +88,11 @@ public class MediaPlayer implements ExoPlayer.Listener,
 
 
 
-    public void addListener(Listener listener) {
+    public void addListener(PlayerEventsListener listener) {
         listeners.add(listener);
     }
 
-    public void setInternalErrorListener(InternalErrorListener listener) {
+    public void setInternalErrorListener(PlayerInternalErrorListener listener) {
         internalErrorListener = listener;
     }
 
@@ -192,7 +147,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
     }
 
     /**
-     * Invoked with the results from a {@link RendererBuilder}.
+     * Invoked with the results from a {@link PlayerRendererBuilder}.
      *
      * @param renderers Renderers indexed by {@link MediaPlayer} TYPE_* constants. An individual
      *     element may be null if there do not exist tracks of the corresponding type.
@@ -218,7 +173,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
     }
 
     /**
-     * Invoked if a {@link RendererBuilder} encounters an error.
+     * Invoked if a {@link PlayerRendererBuilder} encounters an error.
      *
      * @param e Describes the error.
      */
@@ -226,7 +181,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
         if (internalErrorListener != null) {
             internalErrorListener.onRendererInitializationError(e);
         }
-        for (Listener listener : listeners) {
+        for (PlayerEventsListener listener : listeners) {
             listener.onError(e);
         }
         rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
@@ -294,7 +249,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
     @Override
     public void onPlayerError(ExoPlaybackException exception) {
         rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
-        for (Listener listener : listeners) {
+        for (PlayerEventsListener listener : listeners) {
             listener.onError(exception);
         }
     }
@@ -302,7 +257,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
                                    float pixelWidthHeightRatio) {
-        for (Listener listener : listeners) {
+        for (PlayerEventsListener listener : listeners) {
             listener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
         }
     }
@@ -376,7 +331,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
         boolean playWhenReady = player.getPlayWhenReady();
         int playbackState = getPlaybackState();
         if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
-            for (Listener listener : listeners) {
+            for (PlayerEventsListener listener : listeners) {
                 listener.onStateChanged(playWhenReady, playbackState);
             }
             lastReportedPlayWhenReady = playWhenReady;

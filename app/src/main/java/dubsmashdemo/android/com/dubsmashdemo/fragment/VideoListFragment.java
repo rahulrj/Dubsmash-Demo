@@ -29,7 +29,7 @@ import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.activities.VideoRecordActivity;
 import dubsmashdemo.android.com.dubsmashdemo.adapter.VideoFilesAdapter;
 import dubsmashdemo.android.com.dubsmashdemo.async.DbFetcherTask;
-import dubsmashdemo.android.com.dubsmashdemo.db.MySQLiteHelper;
+import dubsmashdemo.android.com.dubsmashdemo.db.VideoDbHelper;
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.LoaderListener;
 import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
@@ -37,6 +37,10 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
 /**
  * Created by rahul.raja on 5/13/16.
+ */
+
+/**
+ * Fragment to show the list of all the videos available
  */
 public class VideoListFragment extends Fragment implements LoaderListener {
 
@@ -168,7 +172,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
 
 
     private void saveVideoPathInDb(VideoObject videoObject) {
-        MySQLiteHelper db = new MySQLiteHelper(getActivity().getApplicationContext());
+        VideoDbHelper db = new VideoDbHelper(getActivity().getApplicationContext());
         db.addVideoDetails(videoObject);
 
     }

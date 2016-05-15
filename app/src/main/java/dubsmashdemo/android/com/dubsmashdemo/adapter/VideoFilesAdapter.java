@@ -18,6 +18,10 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 /**
  * Created by rahul.raja on 5/14/16.
  */
+
+/**
+ * {@link android.support.v7.widget.RecyclerView.Adapter} to show the videos list available
+ */
 public class VideoFilesAdapter extends RecyclerView.Adapter<VideoFilesAdapter.RecyclerItemViewHolder> {
 
     private List<VideoObject> mVideoObjects;
@@ -27,7 +31,7 @@ public class VideoFilesAdapter extends RecyclerView.Adapter<VideoFilesAdapter.Re
     }
 
     public void updateAdapter(List<VideoObject> videoObjects) {
-        mVideoObjects=videoObjects;
+        mVideoObjects = videoObjects;
         notifyDataSetChanged();
 
     }
