@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.SurfaceHolder;
@@ -15,15 +14,18 @@ import com.google.android.exoplayer.AspectRatioFrameLayout;
 import com.google.android.exoplayer.ExoPlayer;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerEventsListener;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
 import dubsmashdemo.android.com.dubsmashdemo.player.ExtractorRendererBuilder;
 import dubsmashdemo.android.com.dubsmashdemo.player.MediaPlayer;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
+import dubsmashdemo.android.com.dubsmashdemo.utils.MediaErrorLogger;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
 /**
  * Created by rahul.raja on 5/14/16.
  */
-public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, MediaPlayer.Listener {
+public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, PlayerEventsListener {
 
     private View mRootLayout;
     private AspectRatioFrameLayout mVideoFrame;
@@ -114,11 +116,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     private void preparePlayer(boolean playWhenReady) {
         if (player == null) {
             String userAgent = Utils.getUserAgent(this, "DubsmashDemo");
-            MediaPlayer.RendererBuilder rendererBuilder = new ExtractorRendererBuilder(this, userAgent, mMediaUri);
+            PlayerRendererBuilder rendererBuilder = new ExtractorRendererBuilder(this, userAgent, mMediaUri);
             player = new MediaPlayer(rendererBuilder);
             player.addListener(this);
             player.seekTo(playerPosition);
             playerNeedsPrepare = true;
+            player.setInternalErrorListener(new MediaErrorLogger());
         }
         if (playerNeedsPrepare) {
             player.prepare();
@@ -168,9 +171,5 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
                 height == 0 ? 1 : (width * pixelWidthHeightRatio) / height);
     }
 
-    private void showSnackMessage(String message) {
-        Snackbar.make(mRootLayout, message, Snackbar.LENGTH_LONG).show();
-
-    }
 
 }

@@ -23,10 +23,12 @@ import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
+
 /**
  * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-public class ExtractorRendererBuilder implements MediaPlayer.RendererBuilder {
+public class ExtractorRendererBuilder implements PlayerRendererBuilder {
 
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
