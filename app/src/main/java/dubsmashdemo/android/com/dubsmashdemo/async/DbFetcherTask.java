@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dubsmashdemo.android.com.dubsmashdemo.db.VideoDbHelper;
-import dubsmashdemo.android.com.dubsmashdemo.interfaces.LoaderListener;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.AsyncListener;
 import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 
 /**
@@ -24,11 +24,11 @@ public class DbFetcherTask extends AsyncTask<Void, Void, List<VideoObject>> {
     private static final String TAG = DbFetcherTask.class.getSimpleName();
 
     private final WeakReference<Context> mContext;
-    private final LoaderListener mLoaderListener;
+    private final AsyncListener mLoaderListener;
 
-    public DbFetcherTask(Context context, LoaderListener loaderListener) {
+    public DbFetcherTask(Context context, AsyncListener asyncListener) {
         this.mContext = new WeakReference<>(context);
-        mLoaderListener = loaderListener;
+        mLoaderListener = asyncListener;
     }
 
 
@@ -47,9 +47,9 @@ public class DbFetcherTask extends AsyncTask<Void, Void, List<VideoObject>> {
     protected void onPostExecute(List<VideoObject> videoObjects) {
         if (mLoaderListener != null) {
             if (videoObjects == null) {
-                mLoaderListener.onDataLoadFailed();
+                mLoaderListener.onTaskFailed();
             } else {
-                mLoaderListener.onDataLoadSucceeded(videoObjects);
+                mLoaderListener.onTaskSuccess(videoObjects);
 
             }
         } else {

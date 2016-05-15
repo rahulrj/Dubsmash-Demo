@@ -185,7 +185,6 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private boolean prepareVideoRecorder() {
 
-        // BEGIN_INCLUDE (configure_preview)
         mCamera = CameraHelper.getDefaultCameraInstance();
 
         // We need to make sure that our preview and recording video size are supported by the
@@ -213,10 +212,8 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
             Log.e(TAG, "Surface texture is unavailable or unsuitable" + e.getMessage());
             return false;
         }
-        // END_INCLUDE (configure_preview)
 
 
-        // BEGIN_INCLUDE (configure_media_recorder)
         mMediaRecorder = new MediaRecorder();
 
         // Step 1: Unlock and set camera to MediaRecorder
@@ -231,7 +228,9 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         mMediaRecorder.setProfile(profile);
 
         mMediaRecorder.setOutputFile(mVideoAbsolutePath);
-        mMediaRecorder.setMaxDuration(5000);
+        mMediaRecorder.setMaxDuration(Constants.RECORDING_MAX_DURATION);
+
+        // Step 4 : set info on the recorder
         mMediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
             public void onInfo(MediaRecorder mr, int what, int extra) {
@@ -240,7 +239,6 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
                 }
             }
         });
-        // END_INCLUDE (configure_media_recorder)
 
         // Step 5: Prepare configured MediaRecorder
         try {
@@ -256,6 +254,15 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         }
         return true;
     }
+
+
+    private void sendDataBackToActivity() {
+        Intent intent = new Intent();
+        intent.putExtra(Constants.KEY_VIDEO_ABS_PATH, mVideoFile.getAbsolutePath());
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
+    }
+
 
     /**
      * Asynchronous task for preparing the {@link android.media.MediaRecorder} since it's a long blocking
@@ -283,12 +290,5 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
             }
 
         }
-    }
-
-    private void sendDataBackToActivity() {
-        Intent intent = new Intent();
-        intent.putExtra(Constants.KEY_VIDEO_ABS_PATH, mVideoFile.getAbsolutePath());
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
     }
 }

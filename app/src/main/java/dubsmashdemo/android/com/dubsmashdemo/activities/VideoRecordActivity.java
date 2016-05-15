@@ -9,7 +9,6 @@ import android.os.Bundle;
 import java.io.File;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
-import dubsmashdemo.android.com.dubsmashdemo.fragment.Camera2VideoFragment;
 import dubsmashdemo.android.com.dubsmashdemo.fragment.CameraVideoFragment;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 
@@ -45,7 +44,7 @@ public class VideoRecordActivity extends Activity {
 
         // Use the new Camera2 APIs which are available from API 21 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cameraFragment = Camera2VideoFragment.newInstance();
+            cameraFragment = CameraVideoFragment.newInstance();
         } else {
             cameraFragment = CameraVideoFragment.newInstance();
         }

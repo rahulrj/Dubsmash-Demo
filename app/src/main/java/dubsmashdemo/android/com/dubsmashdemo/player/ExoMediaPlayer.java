@@ -28,7 +28,7 @@ import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
 /**
  * Created by rahul.raja on 5/14/16.
  */
-public class MediaPlayer implements ExoPlayer.Listener,
+public class ExoMediaPlayer implements ExoPlayer.Listener,
         ExtractorSampleSource.EventListener,
         MediaCodecVideoTrackRenderer.EventListener,
         MediaCodecAudioTrackRenderer.EventListener,
@@ -74,7 +74,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
 
     private PlayerInternalErrorListener internalErrorListener;
 
-    public MediaPlayer(PlayerRendererBuilder rendererBuilder) {
+    public ExoMediaPlayer(PlayerRendererBuilder rendererBuilder) {
         this.rendererBuilder = rendererBuilder;
         player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
         player.addListener(this);
@@ -149,7 +149,7 @@ public class MediaPlayer implements ExoPlayer.Listener,
     /**
      * Invoked with the results from a {@link PlayerRendererBuilder}.
      *
-     * @param renderers Renderers indexed by {@link MediaPlayer} TYPE_* constants. An individual
+     * @param renderers Renderers indexed by {@link ExoMediaPlayer} TYPE_* constants. An individual
      *     element may be null if there do not exist tracks of the corresponding type.
      * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
      */

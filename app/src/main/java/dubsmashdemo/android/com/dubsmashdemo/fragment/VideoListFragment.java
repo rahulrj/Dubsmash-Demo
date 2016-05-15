@@ -30,7 +30,7 @@ import dubsmashdemo.android.com.dubsmashdemo.activities.VideoRecordActivity;
 import dubsmashdemo.android.com.dubsmashdemo.adapter.VideoFilesAdapter;
 import dubsmashdemo.android.com.dubsmashdemo.async.DbFetcherTask;
 import dubsmashdemo.android.com.dubsmashdemo.db.VideoDbHelper;
-import dubsmashdemo.android.com.dubsmashdemo.interfaces.LoaderListener;
+import dubsmashdemo.android.com.dubsmashdemo.interfaces.AsyncListener;
 import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
@@ -42,7 +42,7 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 /**
  * Fragment to show the list of all the videos available
  */
-public class VideoListFragment extends Fragment implements LoaderListener {
+public class VideoListFragment extends Fragment implements AsyncListener {
 
     private static final String TAG = VideoListFragment.class.getSimpleName();
 
@@ -187,7 +187,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     }
 
     @Override
-    public void onDataLoadSucceeded(Object data) {
+    public void onTaskSuccess(Object data) {
         try {
             mAllVideoFiles = (List<VideoObject>) data;
             if (mAllVideoFiles != null && mAllVideoFiles.size() == 0) {
@@ -203,7 +203,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     }
 
     @Override
-    public void onDataLoadFailed() {
+    public void onTaskFailed() {
         showSnackMessage("Data could not be loaded");
     }
 

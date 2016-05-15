@@ -17,7 +17,7 @@ import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerEventsListener;
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
 import dubsmashdemo.android.com.dubsmashdemo.player.ExtractorRendererBuilder;
-import dubsmashdemo.android.com.dubsmashdemo.player.MediaPlayer;
+import dubsmashdemo.android.com.dubsmashdemo.player.ExoMediaPlayer;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 import dubsmashdemo.android.com.dubsmashdemo.utils.MediaErrorLogger;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
@@ -30,7 +30,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
     private View mRootLayout;
     private AspectRatioFrameLayout mVideoFrame;
     private SurfaceView mSurfaceView;
-    private MediaPlayer player;
+    private ExoMediaPlayer player;
     private Uri mMediaUri;
     private boolean playerNeedsPrepare;
     private long playerPosition;
@@ -117,7 +117,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
         if (player == null) {
             String userAgent = Utils.getUserAgent(this, "DubsmashDemo");
             PlayerRendererBuilder rendererBuilder = new ExtractorRendererBuilder(this, userAgent, mMediaUri);
-            player = new MediaPlayer(rendererBuilder);
+            player = new ExoMediaPlayer(rendererBuilder);
             player.addListener(this);
             player.seekTo(playerPosition);
             playerNeedsPrepare = true;
@@ -167,8 +167,9 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        mVideoFrame.setAspectRatio(
-                height == 0 ? 1 : (width * pixelWidthHeightRatio) / height);
+        // set the aspect ratio according to the video size. We can uncomment this if we want the video
+        // to be of fixed size
+        mVideoFrame.setAspectRatio(height == 0 ? 1 : (width * pixelWidthHeightRatio) / height);
     }
 
 

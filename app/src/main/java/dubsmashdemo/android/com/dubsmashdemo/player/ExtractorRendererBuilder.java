@@ -44,7 +44,7 @@ public class ExtractorRendererBuilder implements PlayerRendererBuilder {
     }
 
     @Override
-    public void buildRenderers(MediaPlayer player) {
+    public void buildRenderers(ExoMediaPlayer player) {
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         Handler mainHandler = player.getMainHandler();
 
@@ -62,9 +62,9 @@ public class ExtractorRendererBuilder implements PlayerRendererBuilder {
 
 
         // Invoke the callback.
-        TrackRenderer[] renderers = new TrackRenderer[MediaPlayer.RENDERER_COUNT];
-        renderers[MediaPlayer.TYPE_VIDEO] = videoRenderer;
-        renderers[MediaPlayer.TYPE_AUDIO] = audioRenderer;
+        TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
+        renderers[ExoMediaPlayer.TYPE_VIDEO] = videoRenderer;
+        renderers[ExoMediaPlayer.TYPE_AUDIO] = audioRenderer;
         player.onRenderers(renderers, bandwidthMeter);
     }
 

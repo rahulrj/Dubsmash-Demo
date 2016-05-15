@@ -9,9 +9,9 @@ import dubsmashdemo.android.com.dubsmashdemo.async.DbFetcherTask;
 /**
  * Interface to receive callbacks from {@link DbFetcherTask}
  */
-public interface LoaderListener {
+public interface AsyncListener {
 
-    void onDataLoadSucceeded(Object data);
+    void onTaskSuccess(Object data);
 
-    void onDataLoadFailed();
+    void onTaskFailed();
 }
