@@ -10,6 +10,7 @@
     <string name="timer_finish">00:00:20</string>
     <string name="finish_string">00:00:00</string>
     <string name="camera_audio_permission_request">This sample needs permission for camera and audio recording.</string>
+    <string name="media_recorder_error">Can\'t prepare the MediaRecorder</string>
 
 
 </resources>

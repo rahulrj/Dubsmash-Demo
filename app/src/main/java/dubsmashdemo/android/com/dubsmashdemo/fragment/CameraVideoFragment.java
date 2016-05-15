@@ -49,6 +49,8 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     private MediaRecorder mMediaRecorder;
     private Camera mCamera;
 
+    private MediaPrepareTask mMediaPrepareTask;
+
 
     public static CameraVideoFragment newInstance() {
         return new CameraVideoFragment();
@@ -75,7 +77,8 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mTimerView = (TextView) view.findViewById(R.id.timer);
         mButtonVideo.setOnClickListener(this);
-        new MediaPrepareTask().execute(null, null, null);
+        mMediaPrepareTask = new MediaPrepareTask();
+        mMediaPrepareTask.execute(null, null, null);
 
     }
 
@@ -155,7 +158,11 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
     @Override
     public void onPause() {
         super.onPause();
+        if (mMediaPrepareTask != null) {
+            mMediaPrepareTask.cancel(true);
+        }
         // if we are using MediaRecorder, release it first
+        cancelTheTimer();
         releaseMediaRecorder();
         // release the camera immediately on pause event
         releaseCamera();
@@ -263,30 +270,45 @@ public class CameraVideoFragment extends Fragment implements View.OnClickListene
         getActivity().finish();
     }
 
-
     /**
-     * Asynchronous task for preparing the {@link android.media.MediaRecorder} since it's a long blocking
+     * TODO: There is a slight possibility that this AsyncTask can cause Memory Leak. Although i have
+     * tried to cancel this task in onPause(), but as we know, that does not guarantee full cancel of AsyncTask.
+     * <p/>
+     * Although, i tried to make it static, but couldnt do it as it will cause all the variables and functions in
+     * this class to be static. So thats not a good option.
+     * <p/>
+     * Other way i tried is to make a separate class for it. But that was requiring a lot of code refactor and
+     * a lot of objects to be passes to and forth. Also it caused some redunduncy of the code.
+     * <p/>
+     * So due to time constraints of this test, I have left it like this.
+     * <p/>
+     * /
+
+     * /* Asynchronous task for preparing the {@link android.media.MediaRecorder} since it's a long blocking
      * operation.
      */
     class MediaPrepareTask extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            // initialize video camera
-            if (prepareVideoRecorder()) {
-                return true;
-            } else {
-                // prepare didn't work, release the camera
-                releaseMediaRecorder();
-                return false;
+            if (!isCancelled()) {
+                if (prepareVideoRecorder()) {
+                    return true;
+                } else {
+                    releaseMediaRecorder();
+                    return false;
+                }
             }
+            return false;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (!result) {
-                getActivity().setResult(Activity.RESULT_CANCELED);
-                getActivity().finish();
+            if (!isCancelled() && !result) {
+                if (isAdded()) {
+                    getActivity().setResult(Activity.RESULT_CANCELED);
+                    getActivity().finish();
+                }
             }
 
         }

@@ -311,6 +311,7 @@ public class Camera2VideoFragment extends Fragment
 
     @Override
     public void onPause() {
+        cancelTheTimer();
         closeCamera();
         stopBackgroundThread();
         super.onPause();
@@ -432,7 +433,7 @@ public class Camera2VideoFragment extends Fragment
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
             Log.d(TAG, "tryAcquire");
-            if (!mCameraOpenCloseLock.tryAcquire(5000, TimeUnit.MILLISECONDS)) {
+            if (!mCameraOpenCloseLock.tryAcquire(10000, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             String cameraId = manager.getCameraIdList()[0];

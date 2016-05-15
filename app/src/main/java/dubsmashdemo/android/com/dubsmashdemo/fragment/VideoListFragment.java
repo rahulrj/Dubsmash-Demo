@@ -189,13 +189,15 @@ public class VideoListFragment extends Fragment implements AsyncListener {
     @Override
     public void onTaskSuccess(Object data) {
         try {
-            mAllVideoFiles = (List<VideoObject>) data;
-            if (mAllVideoFiles != null && mAllVideoFiles.size() == 0) {
-                showSnackMessage("No Video Data found");
-                return;
-            }
-            if (mAllVideoFiles != null) {
-                setDataInAdapter();
+            if (isAdded()) {
+                mAllVideoFiles = (List<VideoObject>) data;
+                if (mAllVideoFiles != null && mAllVideoFiles.size() == 0) {
+                    showSnackMessage("No Video Data found");
+                    return;
+                }
+                if (mAllVideoFiles != null) {
+                    setDataInAdapter();
+                }
             }
         } catch (ClassCastException cle) {
             showSnackMessage("Error: Data could not be loaded");
@@ -209,7 +211,9 @@ public class VideoListFragment extends Fragment implements AsyncListener {
 
 
     private void showSnackMessage(String message) {
-        Snackbar.make(mFragmentRootView, message, Snackbar.LENGTH_LONG).show();
+        if (isAdded()) {
+            Snackbar.make(mFragmentRootView, message, Snackbar.LENGTH_LONG).show();
+        }
 
     }
 
