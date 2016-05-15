@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
+import dubsmashdemo.android.com.dubsmashdemo.activities.VideoRecordActivity;
 import dubsmashdemo.android.com.dubsmashdemo.adapter.VideoFilesAdapter;
 import dubsmashdemo.android.com.dubsmashdemo.async.DbFetcherTask;
 import dubsmashdemo.android.com.dubsmashdemo.db.MySQLiteHelper;
@@ -118,39 +120,56 @@ public class VideoListFragment extends Fragment implements LoaderListener {
 
     private void startRecordingVideo() {
         if (getActivity() != null) {
+            mVideoFileName = Constants.VIDEO_NAME_INIT + new SimpleDateFormat(Constants.VIDEO_DATE_FORMAT, Locale.US).format(new Date());
+            File videoDir = Util.getVideoDirectory(getActivity());
+            if (videoDir == null) {
+                showSnackMessage("Failed to create video directory");
+                return;
+            }
+            File videoFile = null;
+            try {
+                videoFile = File.createTempFile(mVideoFileName, Constants.VIDEO_EXTENSION, videoDir);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (videoFile == null) {
+                showSnackMessage("Failed to create video directory");
+                return;
+            }
+            if (Build.VERSION.SDK_INT >= 21) {
+                Intent intent = new Intent(getActivity(), VideoRecordActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Constants.KEY_VIDEO_FILE_NAME, videoFile);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, Constants.VIDEO_CAPTURE_CAMERA);
+                return;
+            }
+
             if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Constants.RECORDING_MAX_DURATION);
                 intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-                mVideoFileName = Constants.VIDEO_NAME_INIT + new SimpleDateFormat(Constants.VIDEO_DATE_FORMAT, Locale.US).format(new Date());
-                File videoDir = Util.getVideoDirectory(getActivity());
-                File videoFile = null;
-                if (videoDir != null) {
-                    try {
-                        videoFile = File.createTempFile(mVideoFileName, Constants.VIDEO_EXTENSION, videoDir);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (videoFile != null) {
-                        Uri videoUri = Uri.fromFile(videoFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
-                        startActivityForResult(intent, Constants.VIDEO_CAPTURE);
-                    }
-                } else {
-                    showSnackMessage("Failed to create directory");
-                }
 
-            } else {
-                showSnackMessage("No camera on device");
+                if (videoFile != null) {
+                    Uri videoUri = Uri.fromFile(videoFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+                    startActivityForResult(intent, Constants.VIDEO_CAPTURE);
+                }
             }
+
+        } else {
+            showSnackMessage("No camera on device");
         }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.VIDEO_CAPTURE) {
             if (resultCode == Activity.RESULT_OK) {
+                Log.d("RAHUL", "" + data.getDataString());
                 Snackbar.make(mFragmentRootView, "Video has been saved as : " + mVideoFileName, Snackbar.LENGTH_LONG).show();
                 VideoObject videoObject = new VideoObject(mVideoFileName, data.getDataString());
                 saveVideoPathInDb(videoObject);
@@ -164,6 +183,21 @@ public class VideoListFragment extends Fragment implements LoaderListener {
                 showSnackMessage("Video recording cancelled");
             } else {
                 showSnackMessage("Failed to record video");
+            }
+        } else if (requestCode == Constants.VIDEO_CAPTURE_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                Snackbar.make(mFragmentRootView, "Video has been saved as : " + mVideoFileName, Snackbar.LENGTH_LONG).show();
+                Log.d("RAHUL", "" + data.getStringExtra(Constants.KEY_VIDEO_ABS_PATH));
+                VideoObject videoObject = new VideoObject(mVideoFileName, data.getStringExtra(Constants.KEY_VIDEO_ABS_PATH));
+                saveVideoPathInDb(videoObject);
+                mAllVideoFiles.add(videoObject);
+                if (mVideoFilesAdapter != null) {
+                    updateRecyclerViewAdapter();
+                } else {
+                    setDataInAdapter();
+                }
+
+
             }
         }
     }
