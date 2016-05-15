@@ -16,9 +16,7 @@
 
 package dubsmashdemo.android.com.dubsmashdemo.utils;
 
-import android.annotation.TargetApi;
 import android.hardware.Camera;
-import android.os.Build;
 
 import java.util.List;
 
@@ -95,29 +93,6 @@ public class CameraHelper {
         return Camera.open();
     }
 
-
-    /**
-     * @param position Physical position of the camera i.e Camera.CameraInfo.CAMERA_FACING_FRONT
-     *                 or Camera.CameraInfo.CAMERA_FACING_BACK.
-     * @return the default camera on the device. Returns null if camera is not available.
-     */
-    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
-    private static Camera getDefaultCamera(int position) {
-        // Find the total number of cameras available
-        int mNumberOfCameras = Camera.getNumberOfCameras();
-
-        // Find the ID of the back-facing ("default") camera
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        for (int i = 0; i < mNumberOfCameras; i++) {
-            Camera.getCameraInfo(i, cameraInfo);
-            if (cameraInfo.facing == position) {
-                return Camera.open(i);
-
-            }
-        }
-
-        return null;
-    }
 
 
 }

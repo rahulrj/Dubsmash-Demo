@@ -31,8 +31,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
-import android.support.v13.app.FragmentCompat;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -57,8 +55,9 @@ import java.util.concurrent.TimeUnit;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
+import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
-@TargetApi(21)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Camera2VideoFragment extends Fragment
         implements View.OnClickListener {
 
@@ -342,13 +341,13 @@ public class Camera2VideoFragment extends Fragment
         mCountDownTimer = new CountDownTimer(Constants.RECORDING_MAX_DURATION, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mTimerView.setText("" + (millisUntilFinished / 1000));
+                mTimerView.setText(String.format("%02d:%02d:%02d", 0, 0, (millisUntilFinished / 1000)));
 
             }
 
             @Override
             public void onFinish() {
-                mTimerView.setText("0");
+                mTimerView.setText(getString(R.string.finish_string));
 
             }
         }.start();
@@ -378,28 +377,13 @@ public class Camera2VideoFragment extends Fragment
         }
     }
 
-    /**
-     * Gets whether you should show UI with rationale for requesting permissions.
-     *
-     * @param permissions The permissions your app wants to request.
-     * @return Whether you can show permission rationale UI.
-     */
-    @TargetApi(23)
-    private boolean shouldShowRequestPermissionRationale(String[] permissions) {
-        for (String permission : permissions) {
-            if (shouldShowRequestPermissionRationale(permission)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Requests permissions needed for recording video.
      */
     @TargetApi(23)
     private void requestVideoPermissions() {
-        if (shouldShowRequestPermissionRationale(Constants.CAMERA_PERMISSIONS)) {
+        if (Utils.shouldShowRequestPermissionRationale(this, Constants.CAMERA_PERMISSIONS)) {
             new PermissionConfirmationDialog().newInstance(getString(R.string.camera_audio_permission_request),
                     Constants.REQUEST_CAMERA_PERMISSIONS, Constants.CAMERA_PERMISSIONS).
                     show(getChildFragmentManager(), FRAGMENT_DIALOG);
@@ -428,26 +412,13 @@ public class Camera2VideoFragment extends Fragment
 
     }
 
-
-
-    @TargetApi(23)
-    private boolean hasPermissionsGranted(String[] permissions) {
-        for (String permission : permissions) {
-            if (getActivity().checkSelfPermission(permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Tries to open a {@link CameraDevice}. The result is listened by `mStateCallback`.
      */
-    @TargetApi(23)
+    @TargetApi(Build.VERSION_CODES.M)
     private void openCamera(int width, int height) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (!hasPermissionsGranted(Constants.CAMERA_PERMISSIONS)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Utils.hasPermissionsGranted(getActivity(), Constants.CAMERA_PERMISSIONS)) {
                 requestVideoPermissions();
                 return;
             }
@@ -459,7 +430,7 @@ public class Camera2VideoFragment extends Fragment
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
             Log.d(TAG, "tryAcquire");
-            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+            if (!mCameraOpenCloseLock.tryAcquire(5000, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             String cameraId = manager.getCameraIdList()[0];
@@ -480,7 +451,7 @@ public class Camera2VideoFragment extends Fragment
             Toast.makeText(activity, "Cannot access the camera.", Toast.LENGTH_SHORT).show();
             activity.finish();
         } catch (NullPointerException e) {
-           // show snack message
+            // show snack message
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.");
         }
@@ -708,9 +679,8 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void stopRecordingVideo() {
-        // UI
         mIsRecordingVideo = false;
-        mButtonVideo.setText(R.string.record);
+        //mButtonVideo.setText(R.string.record);
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();

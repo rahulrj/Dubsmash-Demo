@@ -1,5 +1,8 @@
 package dubsmashdemo.android.com.dubsmashdemo.utils;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,7 +18,7 @@ import dubsmashdemo.android.com.dubsmashdemo.R;
 /**
  * Created by rahul.raja on 5/14/16.
  */
-public class Util {
+public class Utils {
 
     /**
      * Returns a user agent string based on the given application name and the library version.
@@ -68,5 +71,34 @@ public class Util {
 
     private static String getAlbumName(Context context) {
         return context.getString(R.string.app_name);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static boolean hasPermissionsGranted(Activity activity, String[] permissions) {
+        for (String permission : permissions) {
+            if (activity.checkSelfPermission(permission)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    /**
+     * Gets whether you should show UI with rationale for requesting permissions.
+     *
+     * @param permissions The permissions your app wants to request.
+     * @return Whether you can show permission rationale UI.
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    public static boolean shouldShowRequestPermissionRationale(Fragment fragment,String[]permissions) {
+        for (String permission : permissions) {
+            if (fragment.shouldShowRequestPermissionRationale(permission)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

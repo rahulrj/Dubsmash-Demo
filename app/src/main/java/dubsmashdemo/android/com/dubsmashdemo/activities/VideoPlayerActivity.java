@@ -13,12 +13,12 @@ import android.view.View;
 
 import com.google.android.exoplayer.AspectRatioFrameLayout;
 import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.util.Util;
 
 import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.player.ExtractorRendererBuilder;
 import dubsmashdemo.android.com.dubsmashdemo.player.MediaPlayer;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
+import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
 /**
  * Created by rahul.raja on 5/14/16.
@@ -113,7 +113,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHol
 
     private void preparePlayer(boolean playWhenReady) {
         if (player == null) {
-            String userAgent = Util.getUserAgent(this, "DubsmashDemo");
+            String userAgent = Utils.getUserAgent(this, "DubsmashDemo");
             MediaPlayer.RendererBuilder rendererBuilder = new ExtractorRendererBuilder(this, userAgent, mMediaUri);
             player = new MediaPlayer(rendererBuilder);
             player.addListener(this);

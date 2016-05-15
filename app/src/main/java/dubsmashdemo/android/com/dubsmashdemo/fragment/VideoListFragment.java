@@ -33,7 +33,7 @@ import dubsmashdemo.android.com.dubsmashdemo.db.MySQLiteHelper;
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.LoaderListener;
 import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
-import dubsmashdemo.android.com.dubsmashdemo.utils.Util;
+import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
 /**
  * Created by rahul.raja on 5/13/16.
@@ -102,8 +102,8 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_recordvideo:
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (!hasPermissionsGranted(Constants.STORAGE_PERMISSIONS)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (!Utils.hasPermissionsGranted(getActivity(), Constants.STORAGE_PERMISSIONS)) {
                         requestVideoPermissions();
                         return super.onOptionsItemSelected(item);
 
@@ -118,7 +118,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     private void startRecordingVideo() {
         if (getActivity() != null) {
             mVideoFileName = Constants.VIDEO_NAME_INIT + new SimpleDateFormat(Constants.VIDEO_DATE_FORMAT, Locale.US).format(new Date());
-            File videoDir = Util.getVideoDirectory(getActivity());
+            File videoDir = Utils.getVideoDirectory(getActivity());
             if (videoDir == null) {
                 showSnackMessage("Failed to create video directory");
                 return;
@@ -210,36 +210,9 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     }
 
 
-    @TargetApi(23)
-    private boolean hasPermissionsGranted(String[] permissions) {
-        for (String permission : permissions) {
-            if (getActivity().checkSelfPermission(permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Gets whether you should show UI with rationale for requesting permissions.
-     *
-     * @param permissions The permissions your app wants to request.
-     * @return Whether you can show permission rationale UI.
-     */
-    @TargetApi(23)
-    private boolean shouldShowRequestPermissionRationale(String[] permissions) {
-        for (String permission : permissions) {
-            if (shouldShowRequestPermissionRationale(permission)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @TargetApi(23)
+    @TargetApi(Build.VERSION_CODES.M)
     private void requestVideoPermissions() {
-        if (shouldShowRequestPermissionRationale(Constants.STORAGE_PERMISSIONS)) {
+        if (Utils.shouldShowRequestPermissionRationale(this, Constants.STORAGE_PERMISSIONS)) {
             new PermissionConfirmationDialog().newInstance(getString(R.string.storage_permission_request),
                     Constants.REQUEST_STORAGE_PERMISSIONS, Constants.STORAGE_PERMISSIONS)
                     .show(getChildFragmentManager(), PermissionConfirmationDialog.FRAGMENT_DIALOG);
@@ -250,7 +223,7 @@ public class VideoListFragment extends Fragment implements LoaderListener {
     }
 
     @Override
-    @TargetApi(23)
+    @TargetApi(Build.VERSION_CODES.M)
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
