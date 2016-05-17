@@ -16,7 +16,7 @@ import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
  */
 
 /**
- * DB manager to save and retrieve the video paths list
+ * DB manager to save and retrieve the video paths list. Video's name and path are saved in a table "videos"
  */
 public class VideoDbHelper extends SQLiteOpenHelper {
 

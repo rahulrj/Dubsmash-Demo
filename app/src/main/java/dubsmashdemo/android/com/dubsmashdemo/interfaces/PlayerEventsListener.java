@@ -6,7 +6,7 @@ package dubsmashdemo.android.com.dubsmashdemo.interfaces;
 
 
 /**
- * A listener for core events.
+ * A listener for core {@link dubsmashdemo.android.com.dubsmashdemo.player.ExoMediaPlayer} events.
  */
 public interface PlayerEventsListener {
     void onStateChanged(boolean playWhenReady, int playbackState);

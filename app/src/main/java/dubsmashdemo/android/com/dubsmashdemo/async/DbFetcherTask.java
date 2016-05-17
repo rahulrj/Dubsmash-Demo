@@ -17,7 +17,7 @@ import dubsmashdemo.android.com.dubsmashdemo.model.VideoObject;
  */
 
 /**
- * {@link AsyncTask} to fetch the videos list from DB
+ * {@link AsyncTask} to fetch the videos names list from DB
  */
 public class DbFetcherTask extends AsyncTask<Void, Void, List<VideoObject>> {
 

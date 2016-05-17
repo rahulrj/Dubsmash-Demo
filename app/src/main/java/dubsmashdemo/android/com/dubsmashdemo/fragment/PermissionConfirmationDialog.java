@@ -11,6 +11,10 @@ import android.os.Bundle;
 /**
  * Created by rahul.raja on 5/14/16.
  */
+
+/**
+ * Dialog used to display messages related to Android M permissions model
+ */
 public class PermissionConfirmationDialog extends DialogFragment {
 
 

@@ -11,8 +11,11 @@ import com.google.android.exoplayer.audio.AudioTrack;
 
 import java.io.IOException;
 
+import dubsmashdemo.android.com.dubsmashdemo.player.ExoMediaPlayer;
+
 /**
- * Interface to show internal errors. These are for debugging purpose and won't be visible to users
+ * Interface to show internal errors of {@link ExoMediaPlayer} . These are for debugging purpose and won't be
+ * visible to users
  */
 public interface PlayerInternalErrorListener {
     void onRendererInitializationError(Exception e);

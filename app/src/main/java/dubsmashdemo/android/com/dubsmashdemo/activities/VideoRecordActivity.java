@@ -16,6 +16,11 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 /**
  * Created by rahul.raja on 5/15/16.
  */
+
+/**
+ * This activity contains fragments {@link CameraVideoFragment} and {@link Camera2VideoFragment} used
+ * to record video using Camera on a {@link android.view.TextureView}
+ */
 public class VideoRecordActivity extends Activity {
 
 

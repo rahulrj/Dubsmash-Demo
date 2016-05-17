@@ -58,7 +58,7 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Constants;
 import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 
 /**
- * This fragment uses the new APIs available in Camera2 package which is available for Lollypop and above
+ * This fragment uses the new APIs available in Camera2 package which is available for Android API 21 and above
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)

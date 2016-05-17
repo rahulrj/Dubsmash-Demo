@@ -12,9 +12,14 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerInternalErrorListener;
+import dubsmashdemo.android.com.dubsmashdemo.player.ExoMediaPlayer;
 
 /**
  * Created by rahul.raja on 5/15/16.
+ */
+
+/**
+ * A logger used for logging the internal {@link ExoMediaPlayer} errors
  */
 public class MediaErrorLogger implements PlayerInternalErrorListener {
 

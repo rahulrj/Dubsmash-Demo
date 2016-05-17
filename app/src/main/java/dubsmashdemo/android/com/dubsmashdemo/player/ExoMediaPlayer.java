@@ -28,12 +28,12 @@ import dubsmashdemo.android.com.dubsmashdemo.interfaces.PlayerRendererBuilder;
 /**
  * Created by rahul.raja on 5/14/16.
  */
+
 public class ExoMediaPlayer implements ExoPlayer.Listener,
         ExtractorSampleSource.EventListener,
         MediaCodecVideoTrackRenderer.EventListener,
         MediaCodecAudioTrackRenderer.EventListener,
         DebugTextViewHelper.Provider {
-
 
 
     // Constants pulled into this class for convenience.
@@ -85,7 +85,6 @@ public class ExoMediaPlayer implements ExoPlayer.Listener,
         // Disable text initially.
         player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
     }
-
 
 
     public void addListener(PlayerEventsListener listener) {
@@ -149,8 +148,8 @@ public class ExoMediaPlayer implements ExoPlayer.Listener,
     /**
      * Invoked with the results from a {@link PlayerRendererBuilder}.
      *
-     * @param renderers Renderers indexed by {@link ExoMediaPlayer} TYPE_* constants. An individual
-     *     element may be null if there do not exist tracks of the corresponding type.
+     * @param renderers      Renderers indexed by {@link ExoMediaPlayer} TYPE_* constants. An individual
+     *                       element may be null if there do not exist tracks of the corresponding type.
      * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
      */
   /* package */ void onRenderers(TrackRenderer[] renderers, BandwidthMeter bandwidthMeter) {

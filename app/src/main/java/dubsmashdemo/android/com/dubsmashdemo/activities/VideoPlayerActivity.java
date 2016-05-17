@@ -25,6 +25,10 @@ import dubsmashdemo.android.com.dubsmashdemo.utils.Utils;
 /**
  * Created by rahul.raja on 5/14/16.
  */
+
+/**
+ * Activity which contains the {@link ExoMediaPlayer} and {@link SurfaceView} used to play the video files
+ */
 public class VideoPlayerActivity extends AppCompatActivity implements SurfaceHolder.Callback, PlayerEventsListener {
 
     private View mRootLayout;

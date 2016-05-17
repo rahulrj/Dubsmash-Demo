@@ -7,7 +7,7 @@ package dubsmashdemo.android.com.dubsmashdemo.interfaces;
 import dubsmashdemo.android.com.dubsmashdemo.player.ExoMediaPlayer;
 
 /**
- * Builds renderers for the player.
+ * Builds renderers for the {@link ExoMediaPlayer}.
  */
 public interface PlayerRendererBuilder {
     /**
@@ -21,7 +21,7 @@ public interface PlayerRendererBuilder {
 
     /**
      * Cancels the current build operation, if there is one. Else does nothing.
-     * <p>
+     * <p/>
      * A canceled build operation must not invoke {@link ExoMediaPlayer#onRenderers} or
      * {@link ExoMediaPlayer#onRenderersError} on the player, which may have been released.
      */
