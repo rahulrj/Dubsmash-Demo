@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "dubsmashdemo.android.com.dubsmashdemo"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -26,7 +26,8 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.8'
     compile "com.android.support:support-v13:23.3.0"
+
+    // Test for memory leaks
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+
 }

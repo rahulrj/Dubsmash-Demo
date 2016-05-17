@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import dubsmashdemo.android.com.dubsmashdemo.R;
 import dubsmashdemo.android.com.dubsmashdemo.fragment.VideoListFragment;
 
@@ -15,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       // LeakCanary.install(getApplication());
+        LeakCanary.install(getApplication());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

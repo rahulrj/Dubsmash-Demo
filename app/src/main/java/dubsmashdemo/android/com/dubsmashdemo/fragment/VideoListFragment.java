@@ -171,6 +171,7 @@ public class VideoListFragment extends Fragment implements AsyncListener {
     }
 
 
+    // Lightweight operation. Can be done on main thread
     private void saveVideoPathInDb(VideoObject videoObject) {
         VideoDbHelper db = new VideoDbHelper(getActivity().getApplicationContext());
         db.addVideoDetails(videoObject);
